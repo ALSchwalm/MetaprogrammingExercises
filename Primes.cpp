@@ -1,29 +1,8 @@
 #include <iostream>
 #include <array>
+#include <type_traits>
 
 template<unsigned int... ints> struct Ints{};
-
-template<typename intList, bool one>
-struct RangeHelper;
-
-template<unsigned int... ints>
-struct RangeHelper<Ints<ints...>, true>{
-    typedef Ints<ints...> value;
-    static const std::array<unsigned int, sizeof...(ints)> values; 
-};
-
-template<unsigned int... ints> 
-const std::array<unsigned int, sizeof...(ints)> 
-RangeHelper<Ints<ints...>, true>::values = {{ints...}};
-
-template<unsigned int... ints, unsigned int head>
-struct RangeHelper<Ints<head, ints...>, false> :
-    public RangeHelper<Ints<head-1, head, ints...>, head-1==1>{};
-
-template<unsigned int bound>
-struct Range : public RangeHelper<Ints<bound>, bound==1>{};
-
-//------------------------------------
 
 template<typename factorList, unsigned int, unsigned int>
 struct FactorsHelper;
@@ -61,12 +40,43 @@ struct Factors : FactorsHelper<Ints<>, begin/2, begin>{};
 
 //-------------------------------------------------
 
-/*
+template<typename intList, bool>
+struct Remove;
+
+template<typename intList>
+struct PrimeHelper;
+
+template<unsigned int... intList, unsigned int head>
+struct Remove<Ints<head, intList...>, false> : public
+    PrimeHelper<Ints<head-1, intList...>>{};
+
+template<unsigned int... intList, unsigned int head>
+struct Remove<Ints<head, intList...>, true> : public
+    PrimeHelper<Ints<head-1, head, intList...>>{};
+
+template<unsigned int... intList>
+struct PrimeHelper< Ints<2, intList...> > {
+    typedef Ints<2, intList...> value;
+    static const std::array<unsigned int, sizeof...(intList)+1> values;
+};
+
+template<unsigned int... intList>
+const std::array<unsigned int, sizeof...(intList)+1>
+    PrimeHelper< Ints<2, intList...> >::values = {{2, intList...}};
+
+
+template<unsigned int... intList, unsigned int head>
+struct PrimeHelper<Ints<head, intList...>> : 
+    public Remove<Ints<head, intList...>,
+		  std::is_same<typename Factors<head>::value, Ints<>>::value>{};
+
+
+
 template<unsigned int bound>
-struct Primes : public PrimeHelper< Range<bound>::value>{};
-*/
+struct Primes : public PrimeHelper<Ints<bound>>{};
+
 int main() {
-    for( auto value : Factors<20>::values) {
-	std::cout << value << " "; //prints 1 2 3 4 5 6 7 8 9 10
+    for( auto value : Primes<20>::values) {
+	std::cout << value << " "; //prints 2 3 5 7 11 13 17 19
     }
 }
