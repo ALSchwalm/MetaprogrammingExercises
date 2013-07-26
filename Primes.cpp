@@ -25,14 +25,13 @@ template<unsigned int... valueList, unsigned int begin, unsigned int possibleFac
 struct Move<Ints<valueList...>, begin, possibleFactor, false> :
   FactorsHelper<Ints<valueList...>, possibleFactor-1, begin>{};
 
-//Base case of prime checking. If the current value is 1, drop it and stop
+//Base case of factor checking. If the current value is 1, drop it and stop
 template<unsigned int... factorList, unsigned int begin>
 struct FactorsHelper<Ints<factorList...>, 1, begin>{
   typedef Ints<factorList...> value;
   static const std::array<unsigned int, sizeof...(factorList)> values;
 };
 
-//base case of FactorHelper, if the current value is 1, drop it and stop
 template<unsigned int... factorList, unsigned int begin>
 const std::array<unsigned int, sizeof...(factorList)> 
 FactorsHelper<Ints<factorList...>, 1, begin>::values = {{factorList...}};
