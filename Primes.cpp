@@ -67,6 +67,24 @@ template<unsigned int... intList, unsigned int head>
 struct Remove<Ints<head, intList...>, true> : public
     PrimeHelper<Ints<head-1, head, intList...>>{};
 
+template<>
+struct PrimeHelper<Ints<0>> {
+    typedef Ints<> value;
+    static const std::array<unsigned int, 0> values;
+};
+
+const std::array<unsigned int, 0>
+PrimeHelper<Ints<0>>::values = {};
+
+template<>
+struct PrimeHelper<Ints<1>> {
+    typedef Ints<> value;
+    static const std::array<unsigned int, 0> values;
+};
+
+const std::array<unsigned int, 0>
+PrimeHelper<Ints<1>>::values = {};
+
 //Base case of PrimeHelper, if the head is two, stop
 template<unsigned int... intList>
 struct PrimeHelper< Ints<2, intList...> > {
@@ -92,4 +110,5 @@ int main() {
     for( auto value : Primes<20>::values) {
 	std::cout << value << " "; //prints 2 3 5 7 11 13 17 19
     }
+    
 }
