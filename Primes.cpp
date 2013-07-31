@@ -66,6 +66,7 @@ template<unsigned int... intList, unsigned int head>
 struct Remove<Ints<head, intList...>, true> : public
     PrimeHelper<Ints<head-1, head, intList...>>{};
 
+//special case for 0
 template<>
 struct PrimeHelper<Ints<0>> {
     typedef Ints<> value;
@@ -75,6 +76,7 @@ struct PrimeHelper<Ints<0>> {
 const std::array<unsigned int, 0>
 PrimeHelper<Ints<0>>::values = {};
 
+//special case for 1
 template<>
 struct PrimeHelper<Ints<1>> {
     typedef Ints<> value;
@@ -109,5 +111,4 @@ int main() {
     for( auto value : Primes<20>::values) {
 	std::cout << value << " "; //prints 2 3 5 7 11 13 17 19
     }
-    
 }
